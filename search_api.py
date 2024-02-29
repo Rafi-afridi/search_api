@@ -51,7 +51,7 @@ def search_words_in_paragraph(paragraph, words):
 def convertPDFToText(path):
     rsrcmgr = PDFResourceManager()
     retstr = StringIO()
-    codec = 'utf-8'
+    codec = 'latin-1'
     laparams = LAParams()
     device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
     fp = open(path, 'rb')
