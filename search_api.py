@@ -90,10 +90,17 @@ def main():
     
     if uploaded_file is not None:
         file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type}
-
+        
+        
+        # Save the uploaded file to the same directory as the script
+        current_dir = os.getcwd()
+        file_path = os.path.join(current_dir, uploaded_file.name)
+        with open(file_path, 'wb') as f:
+            f.write(uploaded_file.getbuffer())
+            
         # Process the uploaded file
         if uploaded_file.type == "application/pdf":
-            paragraph = convertPDFToText(uploaded_file.name)
+            paragraph = convertPDFToText(file_path)
         elif uploaded_file.type == "text/plain":
             paragraph = uploaded_file.getvalue().decode("utf-8")
         
