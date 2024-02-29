@@ -3,7 +3,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import streamlit as st
-
+import os
 # Libraries to get data from PDF correctly
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
