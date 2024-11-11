@@ -15,6 +15,9 @@ from pdfminer.pdfpage import PDFPage
 import re
 from transformers import pipeline
 
+# Load the summarization pipeline
+summarizer = pipeline("summarization")
+
 try:
     from cStringIO import StringIO ## for Python 2
 except ImportError:
@@ -263,9 +266,6 @@ def page3():
     if extracted_paras:
         
         extracted_paras_df = pd.DataFrame(data=extracted_paras, columns=['Paragraphs_from_PDF']) 
-        
-        # Load the summarization pipeline
-        summarizer = pipeline("summarization")
         
         # Function to summarize text
         def summarize_text(text):
