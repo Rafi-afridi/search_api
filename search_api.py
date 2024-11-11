@@ -18,6 +18,15 @@ from transformers import pipeline
 # Load the summarization pipeline
 summarizer = pipeline("summarization")
 
+# Function to summarize text
+def summarize_text(text):
+    if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
+        summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
+        res = clean_text_cid(summary[0]['summary_text']) 
+    else:
+        res = clean_text_cid(text)
+    return res
+
 try:
     from cStringIO import StringIO ## for Python 2
 except ImportError:
@@ -266,15 +275,6 @@ def page3():
     if extracted_paras:
         
         extracted_paras_df = pd.DataFrame(data=extracted_paras, columns=['Paragraphs_from_PDF']) 
-        
-        # Function to summarize text
-        def summarize_text(text):
-            if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
-                summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
-                res = clean_text_cid(summary[0]['summary_text']) 
-            else:
-                res = clean_text_cid(text)
-            return res
         
         # Apply the summarization to the [Cleaned Paragraph] column
         extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
