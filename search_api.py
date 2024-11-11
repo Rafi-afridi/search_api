@@ -296,8 +296,6 @@ def page3():
         
         # Clean up the buffer
         excel_buffer.close()
-        
-    if st.button("Go back to Main"):
         st.session_state.page = "main"
         st.rerun()
 
