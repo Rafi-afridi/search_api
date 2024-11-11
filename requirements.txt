@@ -3,4 +3,5 @@ streamlit
 pdfminer
 xlsxwriter
 tensorflow
+tf-keras
 transformers
