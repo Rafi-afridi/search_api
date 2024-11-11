@@ -2,4 +2,5 @@ pandas
 streamlit
 pdfminer
 xlsxwriter
+tensorflow
 transformers
