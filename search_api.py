@@ -297,9 +297,9 @@ def page3():
         # Clean up the buffer
         excel_buffer.close()
         
-    if st.button("Go back to Main"):
-        st.session_state.page = "main"
-        st.rerun()
+        if st.button("Go back to Main"):
+            st.session_state.page = "main"
+            st.rerun()
 
 # Check which page to display
 if 'page' not in st.session_state:
