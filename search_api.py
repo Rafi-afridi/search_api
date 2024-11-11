@@ -12,7 +12,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
 from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
-
+import re
 from transformers import pipeline
 
 try:
@@ -104,6 +104,28 @@ def main():
         st.session_state.page = "page3"
         st.rerun()
 
+def clean_text_cid(text):
+    """Cleans the text by replacing (cid:xxx) patterns with potential replacements.
+
+    Args:
+        text: The input text with (cid:xxx) patterns.
+
+    Returns:
+        The cleaned text.
+    """
+
+    # A simple mapping of common (cid:xxx) patterns to their potential replacements
+    replacements = {
+        r"\(cid:415\)": "ti",
+        r"\(cid:425\)": "tt",
+        r"\(cid:414\)": "tf",
+    }
+
+    for pattern, replacement in replacements.items():
+        text = re.sub(pattern, replacement, text)
+
+    return text
+    
 # Page 1
 def page1():
     st.title("Extract Paragraphs with Specific Words Only")
@@ -249,9 +271,10 @@ def page3():
         def summarize_text(text):
             if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
                 summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
-                return summary[0]['summary_text']
+                res = clean_text_cid(summary[0]['summary_text']) 
             else:
-                return text  # Return original text if it's short or not a string
+                res = clean_text_cid(text)
+            return res
         
         # Apply the summarization to the [Cleaned Paragraph] column
         extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
