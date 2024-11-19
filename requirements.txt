@@ -7,3 +7,4 @@ tf-keras
 transformers
 nltk
 matplotlib
+openpyxl
