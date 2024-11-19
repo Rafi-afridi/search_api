@@ -28,6 +28,7 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import nltk
 
+nltk.download('punkt_tab')
 nltk.download('punkt')
 nltk.download('stopwords')
 
