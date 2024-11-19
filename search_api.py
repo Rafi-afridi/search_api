@@ -20,6 +20,17 @@ try:
 except ImportError:
     from io import StringIO ## for Python 3
 
+import string
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.util import bigrams
+from collections import Counter
+import matplotlib.pyplot as plt
+import nltk
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
 # Function to highlight words in text
 def highlight_words(paragraph, words):
     highlighted_paragraph = ""
@@ -102,6 +113,10 @@ def main():
     
     if st.button("Extract Paragraphs and Summarize"):
         st.session_state.page = "page3"
+        st.rerun()
+        
+    if st.button("Text Processing Application"):
+        st.session_state.page = "page4"
         st.rerun()
 
 def clean_text_cid(text):
@@ -301,6 +316,85 @@ def page3():
         st.session_state.page = "main"
         st.rerun()
 
+# Page 2
+def page4():
+    # Streamlit app
+    st.title("Text Processing Application")
+
+    # File uploader
+    uploaded_file = st.file_uploader("Upload an Excel File", type=["xls", "xlsx"])
+
+    # Input for custom stopwords
+    custom_stopwords = st.text_input(
+        "Enter custom stopwords (comma-separated):",
+        placeholder="e.g., example1, example2, example3",
+    )
+
+    if uploaded_file:
+        # Read the Excel file into a DataFrame
+        df = pd.read_excel(uploaded_file)
+        st.write("Data preview:")
+        st.dataframe(df.head())
+
+        # Column selector
+        text_column = st.selectbox("Select the text column to process:", df.columns)
+
+        if st.button("Process Text"):
+            # Tokenization and cleaning
+            text_data = df[text_column].astype(str).str.cat(sep=" ").lower()
+            text_data = text_data.translate(str.maketrans("", "", string.punctuation))
+            text_data = text_data.replace("\n", " ").replace("\r", " ")
+            text_data = " ".join(text_data.split())  # Remove extra spaces
+            
+            # Generate stopwords list
+            stop_words = set(stopwords.words("english"))
+            if custom_stopwords:
+                custom_stopwords_list = [word.strip().lower() for word in custom_stopwords.split(",")]
+                stop_words.update(custom_stopwords_list)
+
+            # Tokenize words
+            tokens = word_tokenize(text_data)
+            filtered_tokens = [word for word in tokens if word not in stop_words]
+
+            # Count word frequencies
+            word_freq = Counter(filtered_tokens)
+            top_words = word_freq.most_common(10)
+
+            # Generate bigrams
+            bigram_list = list(bigrams(filtered_tokens))
+            bigram_freq = Counter(bigram_list)
+            top_bigrams = bigram_freq.most_common(10)
+
+            # Prepare results table
+            top_words_df = pd.DataFrame({
+                "Word": [word[0] for word in top_words],
+                "Count": [word[1] for word in top_words],
+                "Bigram": [f"{bigram[0][0]} {bigram[0][1]}" for bigram in top_bigrams],
+                "Bigram Count": [bigram[1] for bigram in top_bigrams],
+            })
+            st.write("Top Words and Bigrams:")
+            st.dataframe(top_words_df)
+
+            # Plot word frequencies
+            st.write("Top 10 Words Frequency:")
+            fig, ax = plt.subplots()
+            ax.bar([word[0] for word in top_words], [word[1] for word in top_words])
+            plt.xticks(rotation=45)
+            plt.title("Top 10 Most Frequent Words")
+            st.pyplot(fig)
+
+            # Plot bigram frequencies
+            st.write("Top 10 Bigrams Frequency:")
+            fig, ax = plt.subplots()
+            ax.bar(
+                [f"{bigram[0][0]} {bigram[0][1]}" for bigram in top_bigrams],
+                [bigram[1] for bigram in top_bigrams],
+            )
+            plt.xticks(rotation=45)
+            plt.title("Top 10 Most Frequent Bigrams")
+            st.pyplot(fig)
+
+
 # Check which page to display
 if 'page' not in st.session_state:
     st.session_state.page = "main"
@@ -313,3 +407,5 @@ elif st.session_state.page == "page2":
     page2()
 elif st.session_state.page == "page3":
     page3()
+elif st.session_state.page == "page4":
+    page4()

@@ -5,3 +5,5 @@ xlsxwriter
 tensorflow
 tf-keras
 transformers
+nltk
+matplotlib
