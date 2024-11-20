@@ -339,6 +339,15 @@ def page4():
 
         # Column selector
         text_column = st.selectbox("Select the text column to process:", df.columns)
+        
+        # Add a number input for user to select the number of top words and bigrams to display
+        top_n = st.number_input(
+                "Enter the number of top words and bigrams to display:",
+                min_value=1,  # Minimum value for input
+                max_value=100,  # Maximum value for input
+                value=10,  # Default value
+                step=5,  # Step for increment/decrement
+)
 
         if st.button("Process Text"):
             # Tokenization and cleaning
@@ -359,12 +368,12 @@ def page4():
 
             # Count word frequencies
             word_freq = Counter(filtered_tokens)
-            top_words = word_freq.most_common(10)
+            top_words = word_freq.most_common(top_n)
 
             # Generate bigrams
             bigram_list = list(bigrams(filtered_tokens))
             bigram_freq = Counter(bigram_list)
-            top_bigrams = bigram_freq.most_common(10)
+            top_bigrams = bigram_freq.most_common(top_n)
 
             # Prepare results table
             top_words_df = pd.DataFrame({
@@ -381,7 +390,7 @@ def page4():
             fig, ax = plt.subplots()
             ax.bar([word[0] for word in top_words], [word[1] for word in top_words])
             plt.xticks(rotation=45)
-            plt.title("Top 10 Most Frequent Words")
+            plt.title(f"Top {top_n} Most Frequent Words")
             st.pyplot(fig)
 
             # Plot bigram frequencies
@@ -392,7 +401,7 @@ def page4():
                 [bigram[1] for bigram in top_bigrams],
             )
             plt.xticks(rotation=45)
-            plt.title("Top 10 Most Frequent Bigrams")
+            plt.title(f"Top {top_n} Most Frequent Bigrams")
             st.pyplot(fig)
 
 
