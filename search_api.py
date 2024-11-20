@@ -365,7 +365,10 @@ def page4():
             # Tokenize words
             tokens = word_tokenize(text_data)
             filtered_tokens = [word for word in tokens if word not in stop_words]
-
+            
+            if len(top_n) > len(filtered_tokens):
+                top_n = len(filtered_tokens)
+            
             # Count word frequencies
             word_freq = Counter(filtered_tokens)
             top_words = word_freq.most_common(top_n)
@@ -386,7 +389,7 @@ def page4():
             st.dataframe(top_words_df)
 
             # Plot word frequencies
-            st.write("Top 10 Words Frequency:")
+            st.write(f"Top {top_n} Words Frequency:")
             fig, ax = plt.subplots()
             ax.bar([word[0] for word in top_words], [word[1] for word in top_words])
             plt.xticks(rotation=45)
@@ -394,7 +397,7 @@ def page4():
             st.pyplot(fig)
 
             # Plot bigram frequencies
-            st.write("Top 10 Bigrams Frequency:")
+            st.write(f"Top {top_n} Bigrams Frequency:")
             fig, ax = plt.subplots()
             ax.bar(
                 [f"{bigram[0][0]} {bigram[0][1]}" for bigram in top_bigrams],
