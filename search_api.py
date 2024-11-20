@@ -366,8 +366,8 @@ def page4():
             tokens = word_tokenize(text_data)
             filtered_tokens = [word for word in tokens if word not in stop_words]
             
-            if len(top_n) > len(filtered_tokens):
-                top_n = 10
+            if top_n > len(filtered_tokens):
+                top_n = len(filtered_tokens)
             
             # Count word frequencies
             word_freq = Counter(filtered_tokens)
