@@ -390,7 +390,7 @@ def page4():
 
             # Plot word frequencies
             st.write(f"Top {top_n} Words Frequency:")
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize = (15, 8))
             ax.bar([word[0] for word in top_words], [word[1] for word in top_words])
             plt.xticks(rotation=45)
             plt.title(f"Top {top_n} Most Frequent Words")
@@ -398,7 +398,7 @@ def page4():
 
             # Plot bigram frequencies
             st.write(f"Top {top_n} Bigrams Frequency:")
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize = (15, 8))
             ax.bar(
                 [f"{bigram[0][0]} {bigram[0][1]}" for bigram in top_bigrams],
                 [bigram[1] for bigram in top_bigrams],
