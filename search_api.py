@@ -286,15 +286,15 @@ def page3_1():
         # summarizer = pipeline("summarization")
 
         # Function to summarize text
-        """
-        def summarize_text(text):
-            if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
-                summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
-                res = clean_text_cid(summary[0]['summary_text']) 
-            else:
-                res = clean_text_cid(text)
-            return res
-        """
+        
+        #def summarize_text(text):
+        #    if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
+        #        summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
+        #        res = clean_text_cid(summary[0]['summary_text']) 
+        #    else:
+        #        res = clean_text_cid(text)
+        #    return res
+
         extracted_paras_df = pd.DataFrame(data=extracted_paras, columns=['Paragraphs_from_PDF']) 
         
         # Apply the summarization to the [Cleaned Paragraph] column
