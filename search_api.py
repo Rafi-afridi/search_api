@@ -115,6 +115,10 @@ def main():
     if st.button("Extract Paragraphs and Summarize"):
         st.session_state.page = "page3"
         st.rerun()
+
+    if st.button("Extract Paragraphs and No Summarize"):
+        st.session_state.page = "page3_1"
+        st.rerun()
         
     if st.button("Text Processing Application"):
         st.session_state.page = "page4"
