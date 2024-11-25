@@ -279,9 +279,10 @@ def page3():
     if extracted_paras:
         
         # Load the summarization pipeline
-        summarizer = pipeline("summarization")
+        # summarizer = pipeline("summarization")
 
         # Function to summarize text
+        """
         def summarize_text(text):
             if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
                 summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
@@ -289,11 +290,11 @@ def page3():
             else:
                 res = clean_text_cid(text)
             return res
-        
+        """
         extracted_paras_df = pd.DataFrame(data=extracted_paras, columns=['Paragraphs_from_PDF']) 
         
         # Apply the summarization to the [Cleaned Paragraph] column
-        extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
+        # extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
 
         # Save file to an Excel file
         excel_buffer = BytesIO()
