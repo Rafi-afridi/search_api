@@ -354,7 +354,7 @@ def page3():
     if extracted_paras:
         
         # Load the summarization pipeline
-        # summarizer = pipeline("summarization")
+        summarizer = pipeline("summarization")
 
         # Function to summarize text
         def summarize_text(text):
