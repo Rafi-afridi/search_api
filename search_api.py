@@ -248,8 +248,8 @@ def page2():
         st.rerun()
         
 # Page 3
-def page3():
-    st.title("Extract Paragraphs and Summarize")
+def page3_1():
+    st.title("Extract Paragraphs and No Summarize")
 
     # File uploader
     uploaded_file = st.file_uploader("Upload File", type=["pdf","txt"])
@@ -295,6 +295,76 @@ def page3():
         
         # Apply the summarization to the [Cleaned Paragraph] column
         # extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
+
+        # Save file to an Excel file
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            extracted_paras_df.to_excel(writer, index=False, sheet_name='Paragraphs')
+        
+        st.success("Paragraphs extracted successfully and stored in Excel file.")
+
+        # Button to download the Excel file
+        st.download_button(
+            label="Download Excel",
+            data=excel_buffer,
+            file_name="summarized_paras.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        
+        # Clean up the buffer
+        excel_buffer.close()
+        
+    if st.button("Go back to Main"):
+        st.session_state.page = "main"
+        st.rerun()
+
+# Page 3
+def page3():
+    st.title("Extract Paragraphs and Summarize")
+
+    # File uploader
+    uploaded_file = st.file_uploader("Upload File", type=["pdf","txt"])
+        
+    extracted_paras = []
+    
+    if uploaded_file is not None:
+        
+        file_details = {"FileName": uploaded_file.name, "FileType": uploaded_file.type}
+        
+        # Save the uploaded file to the same directory as the script
+        current_dir = os.getcwd()
+        file_path = os.path.join(current_dir, uploaded_file.name)
+        with open(file_path, 'wb') as f:
+            f.write(uploaded_file.getbuffer())
+            
+        # Process the uploaded file
+        if uploaded_file.type == "application/pdf":
+            paragraph = convertPDFToText(uploaded_file.name)
+        elif uploaded_file.type == "text/plain":
+            paragraph = uploaded_file.getvalue().decode("utf-8")
+        
+        for para in split_text_into_paragraphs(paragraph):
+            
+            extracted_paras.append([para])
+                
+    if extracted_paras:
+        
+        # Load the summarization pipeline
+        # summarizer = pipeline("summarization")
+
+        # Function to summarize text
+        def summarize_text(text):
+            if isinstance(text, str) and len(text.split()) > 50:  # Summarize only if the text is long enough
+                summary = summarizer(text, max_length=50, min_length=25, do_sample=False)
+                res = clean_text_cid(summary[0]['summary_text']) 
+            else:
+                res = clean_text_cid(text)
+            return res
+
+        extracted_paras_df = pd.DataFrame(data=extracted_paras, columns=['Paragraphs_from_PDF']) 
+        
+        # Apply the summarization to the [Cleaned Paragraph] column
+        extracted_paras_df['Summary'] = extracted_paras_df['Paragraphs_from_PDF'].apply(summarize_text)
 
         # Save file to an Excel file
         excel_buffer = BytesIO()
@@ -421,5 +491,7 @@ elif st.session_state.page == "page2":
     page2()
 elif st.session_state.page == "page3":
     page3()
+elif st.session_state.page == "page3_1":
+    page3_1()
 elif st.session_state.page == "page4":
     page4()
