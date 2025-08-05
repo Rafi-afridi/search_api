@@ -123,6 +123,10 @@ def main():
     if st.button("Text Processing Application"):
         st.session_state.page = "page4"
         st.rerun()
+        
+    if st.button("Extract tables from PDF"):
+        st.session_state.page = "page5"
+        st.rerun()
 
 def clean_text_cid(text):
     """Cleans the text by replacing (cid:xxx) patterns with potential replacements.
@@ -483,6 +487,56 @@ def page4():
             st.pyplot(fig)
 
 
+def extract_tables_from_pdf(pdf_file):
+    tables = []
+    with pdfplumber.open(pdf_file) as pdf:
+        for i, page in enumerate(pdf.pages):
+            page_tables = page.extract_tables()
+            for j, table in enumerate(page_tables):
+                df = pd.DataFrame(table[1:], columns=table[0])
+                tables.append((f"Page_{i+1}_Table_{j+1}", df))
+    return tables
+
+def tables_to_excel(tables):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        for sheet_name, df in tables:
+            sheet_name = sheet_name[:31]
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+    output.seek(0)
+    return output
+    
+# Page 5
+def page5():
+    # Streamlit app
+    st.title("PDF Table Extractor to Excel")
+
+    uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+    
+    if uploaded_file is not None:
+        st.success("PDF uploaded successfully. Extracting tables...")
+        
+        try:
+            tables = extract_tables_from_pdf(uploaded_file)
+    
+            if not tables:
+                st.warning("No tables found in the uploaded PDF.")
+            else:
+                st.success(f"Found {len(tables)} table(s). Preparing Excel file...")
+    
+                excel_file = tables_to_excel(tables)
+    
+                st.download_button(
+                    label="📥 Download Excel File",
+                    data=excel_file,
+                    file_name="extracted_tables.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+        
+        
+
 # Check which page to display
 if 'page' not in st.session_state:
     st.session_state.page = "main"
@@ -499,3 +553,5 @@ elif st.session_state.page == "page3_1":
     page3_1()
 elif st.session_state.page == "page4":
     page4()
+elif st.session_state.page == "page5":
+    page5()
