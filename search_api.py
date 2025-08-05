@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 import os
 from io import BytesIO
+import pdfplumber
 
 # Libraries to get data from PDF correctly
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -536,7 +537,6 @@ def page5():
             st.error(f"An error occurred: {e}")
         
         
-
 # Check which page to display
 if 'page' not in st.session_state:
     st.session_state.page = "main"
